@@ -1,6 +1,6 @@
 = Hello world
 :hp-tags: HubPress, Hello world
 
-This blog was powered by http://hubpress.io[HubPress].
+This blog was powered by http://hubpress.io[HubPress] and http://github.io[GitHub]
 
 It is very simple and easy to add new post + page.
