@@ -1,4 +1,5 @@
 = Hello world
+:hp-tags: HubPress, Hello world
 
 This blog was powered by http://hubpress.io[HubPress].
 
