@@ -1,10 +1,1 @@
-{
-  "meta": {
-    "username": "sanglt",
-    "repositoryName": "sanglt.github.io",
-    "branch": "master"
-  },
-  "theme": {
-    "name": "Casper"
-  }
-}
+{"meta":{"username":"sanglt","repositoryName":"sanglt.github.io","branch":"master","cname":"www.sanglt.com"},"site":{"title":"SangLT Weblog","url":"http://www.sanglt.com"},"socialnetwork":{},"theme":{"name":"Casper","url":"http://sanglt.github.io/themes/Casper"}}
