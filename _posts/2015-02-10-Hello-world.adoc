@@ -1,0 +1,5 @@
+= Hello world
+
+This blog was powered by http://hubpress.io[HubPress].
+
+It is very simple and easy to add new post + page.
