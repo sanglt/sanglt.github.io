@@ -56,3 +56,4 @@ $ echo "<?php phpinfo();" | sudo tee /var/www/html/info.php
 Restart apache server and test by going to http://IP/info.php
 
 You should see the phpinfo page:
+image::phpinfo.png[PHP Info]
