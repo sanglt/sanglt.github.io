@@ -1,7 +1,16 @@
 = PowerDNS with MySQL backend on Debian 8
 :hp-tags: PowerDNS, MySQL, Debian 8
 
-It very simle, after install Debian 8
+After longtime use many DNS service, it just a time to setup my own DNS server and i'll provide a DNS service soon.
+Since Debian 8 is stable now, i'll stick with this OS. My plan is setup 2 server for the DNS and make it work.
+
+Now everything work and my nameserver is:
+----
+ns1.sang.io	123.30.105.66
+ns2.sang.io	123.30.129.5
+----
+
+Here is the setup, it very easy.
 
 == Install MySQL server
 ----
