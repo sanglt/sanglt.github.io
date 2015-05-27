@@ -1,0 +1,56 @@
+= Apache 2.4 + PHP5-FPM on Debian8
+
+I'm a fan of nginx before, but since Apache 2.4 release, i try it and it give greate perfomance. This is how i can use Apache 2.4 and PHP5-FPM:
+
+=== Install php
+----
+$ sudo apt-get install php5-gd php5-curl php5-mysql php5-memcache php5-mcrypt
+$ sudo service php5-fpm start
+----
+Default it will run with socket: */var/run/php5-fpm.sock*, but the mod_proxy_fcgi just support tcp for now. We change it to listen over TCP socket:
+----
+$ sudo sed -i "s/listen =.*/listen = 127.0.0.1:9000/" /etc/php5/fpm/pool.d/www.conf
+$ sudo service php5-fpm restart
+----
+
+=== Config Apache
+Apache 2.4 on Debian 8 came with module proxy_fcgi in core, so just enable it first
+----
+$ sudo a2enmod proxy_fcgi
+Considering dependency proxy for proxy_fcgi:
+Enabling module proxy.
+Enabling module proxy_fcgi.
+To activate the new configuration, you need to run:
+  service apache2 restart
+----
+
+Make change to default site:
+----
+sudo vim /etc/apache2/sites-enabled/000-default.conf
+----
+Add those 2 line after *DocumentRoot* line
+----
+        ProxyPassMatch ^/(.*\.php(/.*)?)$ unix:/var/run/php5-fpm.sock/path/var/www/html/
+        DirectoryIndex /index.php index.php
+----
+The full VirtualHost in this example would look like this:
+----
+<VirtualHost *:80>
+    ServerName localhost
+    DocumentRoot /var/www/html
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000/var/www/html/$1
+</VirtualHost>
+----
+Restart web server:
+----
+$ sudo service apache2 restart 
+----
+Create info.php file
+----
+$ echo "<?php phpinfo();" | sudo tee /var/www/html/info.php
+----
+Restart apache server and test by going to http://IP/info.php
