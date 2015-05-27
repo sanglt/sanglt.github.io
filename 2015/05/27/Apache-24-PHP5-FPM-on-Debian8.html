@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Apache 2.4 + PHP5-FPM on Debian8</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="//www.sanglt.com/themes/Casper/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//www.sanglt.com/themes/Casper/assets/css/screen.css?v=1.0.0" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.sanglt.com/2015/05/27/Apache-24-PHP5-FPM-on-Debian8.html" />
+    
+    <meta property="og:site_name" content="SangLT Weblog" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Apache 2.4 + PHP5-FPM on Debian8" />
+    <meta property="og:description" content="I&amp;#8217;m a fan of nginx before, but since Apache 2.4 release, i try it and it give greate perfomance. This is how i can use Apache 2.4 and PHP5-FPM: Install php $ sudo apt-get install php5-gd php5-curl..." />
+    <meta property="og:url" content="http://www.sanglt.com/2015/05/27/Apache-24-PHP5-FPM-on-Debian8.html" />
+    <meta property="article:published_time" content="2015-05-26T17:00:00.000Z" />
+    <meta property="article:modified_time" content="2015-05-27T13:47:40.859Z" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Apache 2.4 + PHP5-FPM on Debian8" />
+    <meta name="twitter:description" content="I&amp;#8217;m a fan of nginx before, but since Apache 2.4 release, i try it and it give greate perfomance. This is how i can use Apache 2.4 and PHP5-FPM: Install php $ sudo apt-get install php5-gd php5-curl..." />
+    <meta name="twitter:url" content="http://www.sanglt.com/2015/05/27/Apache-24-PHP5-FPM-on-Debian8.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "SangLT Weblog",
+    "author": {
+        "@type": "Person",
+        "name": "Lê Thanh Sang",
+        "image": "https://avatars.githubusercontent.com/u/128535?v=3",
+        "url": "undefined/author/undefined",
+        "sameAs": "http://www.sanglt.com"
+    },
+    "headline": "Apache 2.4 + PHP5-FPM on Debian8",
+    "url": "http://www.sanglt.com/2015/05/27/Apache-24-PHP5-FPM-on-Debian8.html",
+    "datePublished": "2015-05-26T17:00:00.000Z",
+    "dateModified": "2015-05-27T13:47:40.859Z",
+    "description": "I&amp;#8217;m a fan of nginx before, but since Apache 2.4 release, i try it and it give greate perfomance. This is how i can use Apache 2.4 and PHP5-FPM: Install php $ sudo apt-get install php5-gd php5-curl..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost ?" />
+    <link rel="alternate" type="application/rss+xml" title="SangLT Weblog" href="http://www.sanglt.com/rss" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+</head>
+<body class="post-template">
+
+    
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="http://www.sanglt.com">Home</a>
+        <!-- <a class="subscribe-button icon-feed" href="http://www.sanglt.com/rss/">Subscribe</a> -->
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Apache 2.4 + PHP5-FPM on Debian8</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-05-27">27 May 2015</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>I&#8217;m a fan of nginx before, but since Apache 2.4 release, i try it and it give greate perfomance. This is how i can use Apache 2.4 and PHP5-FPM:</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_install_php">Install php</h3>
+<div class="listingblock">
+<div class="content">
+<pre>$ sudo apt-get install php5-gd php5-curl php5-mysql php5-memcache php5-mcrypt
+$ sudo service php5-fpm start</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Default it will run with socket: <strong>/var/run/php5-fpm.sock</strong>, but the mod_proxy_fcgi just support tcp for now. We change it to listen over TCP socket:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ sudo sed -i "s/listen =.*/listen = 127.0.0.1:9000/" /etc/php5/fpm/pool.d/www.conf
+$ sudo service php5-fpm restart</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_config_apache">Config Apache</h3>
+<div class="paragraph">
+<p>Apache 2.4 on Debian 8 came with module proxy_fcgi in core, so just enable it first</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ sudo a2enmod proxy_fcgi
+Considering dependency proxy for proxy_fcgi:
+Enabling module proxy.
+Enabling module proxy_fcgi.
+To activate the new configuration, you need to run:
+  service apache2 restart</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make change to default site:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>sudo vim /etc/apache2/sites-enabled/000-default.conf</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add those 2 line after <strong>DocumentRoot</strong> line</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>        ProxyPassMatch ^/(.*\.php(/.*)?)$ unix:/var/run/php5-fpm.sock/path/var/www/html/
+        DirectoryIndex /index.php index.php</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The full VirtualHost in this example would look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;VirtualHost *:80&gt;
+    ServerName localhost
+    DocumentRoot /var/www/html
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000/var/www/html/$1
+&lt;/VirtualHost&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Restart web server:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ sudo service apache2 restart</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create info.php file</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ echo "&lt;?php phpinfo();" | sudo tee /var/www/html/info.php</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Restart apache server and test by going to <a href="http://IP/info.php" class="bare">http://IP/info.php</a></p>
+</div>
+<div class="paragraph">
+<p>You should see the phpinfo page:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/images/phpinfo.png" alt="PHP Info">
+</div>
+</div>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="" style="background-image: url(https://avatars.githubusercontent.com/u/128535?v=3)"><span class="hidden">Lê Thanh Sang's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="">Lê Thanh Sang</a></h4>
+
+                    <p>Read <a href="">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Hồ Chí Minh - Việt Nam</span>
+                    <span class="author-link icon-link"><a href="http://www.sanglt.com">http://www.sanglt.com</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Apache%202.4%20%2B%20PHP5-FPM%20on%20Debian8&amp;url=http://www.sanglt.com/2015/05/27/Apache-24-PHP5-FPM-on-Debian8.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.sanglt.com/2015/05/27/Apache-24-PHP5-FPM-on-Debian8.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.sanglt.com/2015/05/27/Apache-24-PHP5-FPM-on-Debian8.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="http://www.sanglt.com">SangLT Weblog</a> &copy; 2015</section>
+        <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+    </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();      
+      </script>
+
+    <script type="text/javascript" src="//www.sanglt.com/themes/Casper/assets/js/jquery.fitvids.js?v=1.0.0"></script>
+    <script type="text/javascript" src="//www.sanglt.com/themes/Casper/assets/js/index.js?v=1.0.0"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-414925-12', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
